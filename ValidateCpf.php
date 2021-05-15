@@ -1,31 +1,28 @@
 <?php
-// Cenário: validar sistema que recebe apenas o numero de CPF com 11 digitos, retornando true ou false
 
-class ValidateCpfTest
+class ValidateCpf
 {
     public const CPF_SIZE_DEFAULT = 11;
 
-    private function calculatorCpfDigit(array $cpf): int
+    private function calculatorCpfDigit(array $cpf)
     {
         $sumDigit = 0;
         foreach ($cpf as $index => $digit) {
-            $multiplicationResult = $index * $digit;
+            $multiplicationResult = (int) $index * (int) $digit;
 
             $sumDigit += $multiplicationResult;
         }
 
-        $restTotal = ($sumDigit * 10) % ValidateCpfTest::CPF_SIZE_DEFAULT;
-        $subtractionDigit = ValidateCpfTest::CPF_SIZE_DEFAULT - $restTotal;
+        $restTotal = ($sumDigit * 10) % ValidateCpf::CPF_SIZE_DEFAULT;
 
-        return $subtractionDigit;
+        return $restTotal;
     }
 
-    public function validateCPF(string $cpf): bool
+    public function validatedCpf(string $cpf): bool
     {
-        $sizeActual = count_chars($cpf);
-
-        if ($sizeActual != ValidateCpfTest::CPF_SIZE_DEFAULT) {
-            throw new \Exception("O CPF '$cpf' é inválido!");
+        $sizeActual = strlen($cpf);
+        if ($sizeActual !== ValidateCpf::CPF_SIZE_DEFAULT) {
+            return false;
         }
 
         $headCpf = [
@@ -39,9 +36,10 @@ class ValidateCpfTest
             3 => $cpf[7],
             2 => $cpf[8]
         ];
+        $twoVerifyingDigits = [$cpf[9], $cpf[10]];
+
         $resultTotalDigit1 = $this->calculatorCpfDigit($headCpf);
 
-        $twoVerifyingDigits = [$cpf[9], $cpf[10]];
         if ($resultTotalDigit1 != $twoVerifyingDigits[0]) {
             return false;
         }
@@ -59,7 +57,7 @@ class ValidateCpfTest
             2 => $cpf[9]
         ];
         $resultTotalDigit2 = $this->calculatorCpfDigit($headCpf);
-
+        
         if ($resultTotalDigit2 != $twoVerifyingDigits[1]) {
             return false;
         }
